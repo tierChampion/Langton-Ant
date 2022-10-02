@@ -47,6 +47,6 @@ class Cell:
 
             # Triangle vertices. Move all of them by 1 to the left every triangle and flip the height
             for i in range(int(CellShape.TRI)):
-                verts.append((self.dimension * (self.row + i), self.dimension * (self.col + ((i + 1) % 2) - flipped)))
+                verts.append((self.dimension * (self.row + i), self.dimension * (self.col + ((i + flipped) % 2))))
 
         return verts

@@ -10,30 +10,81 @@
 # Islands: 10, ['F', 'D', 'D', 'C', 'A', 'F', 'F', 'E', 'A', 'A']
 # Fractal-like: 10, ['C', 'C', 'F', 'D', 'B', 'D', 'F', 'C', 'C', 'C']
 
+# [[[0, 'F', 12], [2, 'A', 1], [0, 'B', 4], [2, 'D', 3], [0, 'A', 11], [1, 'D', 7], [0, 'D', 4],
+# [1, 'E', 12], [1, 'B', 4], [1, 'F', 4], [2, 'A', 10], [1, 'E', 8], [1, 'D', 5], [2, 'C', 10], [0, 'F', 9]],
+# [[0, 'D', 2], [0, 'F', 9], [1, 'A', 5], [1, 'D', 11], [0, 'C', 3], [2, 'B', 4], [2, 'D', 12],
+# [2, 'C', 12], [2, 'D', 14], [1, 'F', 1], [1, 'E', 4], [2, 'A', 10], [0, 'E', 9], [0, 'E', 5], [2, 'C', 4]],
+# [[0, 'B', 14], [0, 'B', 3], [1, 'E', 14], [0, 'B', 14], [2, 'F', 5], [0, 'C', 7], [2, 'A', 4],
+# [0, 'F', 14], [2, 'D', 4], [0, 'B', 14], [2, 'D', 13], [0, 'F', 13], [2, 'D', 3], [0, 'C', 10], [0, 'B', 1]]]
+
+# [[[1, 'D', 1], [1, 'F', 1], [1, 'D', 2], [1, 'D', 2]], [[0, 'C', 2], [1, 'E', 1], [1, 'E', 1], [0, 'E', 2]]]
+
+# [[[1, 'A', 1], [1, 'E', 1], [1, 'E', 1], [1, 'A', 3]], [[1, 'C', 1], [1, 'A', 3], [0, 'C', 1], [0, 'A', 3]]]
+
+# [[[1, 'A', 3], [0, 'A', 2], [0, 'B', 1], [1, 'C', 1]], [[0, 'F', 3], [1, 'E', 1], [1, 'A', 1], [0, 'E', 1]]]
+
+# [[[1, 'C', 1], [1, 'C', 1], [1, 'C', 1], [0, 'F', 2]], [[1, 'C', 2], [1, 'A', 1], [0, 'D', 2], [0, 'A', 1]]]
+
+# [[[1, 'E', 2], [1, 'A', 1], [1, 'B', 2], [0, 'A', 1]], [[0, 'F', 2], [1, 'F', 3], [0, 'F', 3], [0, 'E', 2]]]
+
+# [[[0, 'B', 2], [0, 'B', 3], [1, 'B', 3], [0, 'E', 3]], [[0, 'B', 3], [0, 'D', 3], [1, 'E', 2], [0, 'E', 2]]]
+
+# HEX BUILDER:
+# [[[0, 'E', 2], [1, 'F', 1], [0, 'B', 2], [0, 'C', 1]],
+# [[0, 'E', 3], [0, 'A', 3], [1, 'F', 3], [1, 'A', 1]]]
+
+# Filled Spiral:
+# [[[1, 'E', 1], [1, 'C', 2], [0, 'D', 1], [0, 'C', 2]], [[0, 'F', 2], [0, 'A', 2], [1, 'F', 3], [1, 'B', 3]]]
+
+# Spider web:
+# [[[1, 'C', 1], [0, 'F', 1], [1, 'F', 3], [1, 'D', 1]], [[1, 'C', 2], [1, 'C', 2], [1, 'C', 3], [0, 'C', 2]]]
+
+# Triple fill:
+# [[[0, 'F', 2], [1, 'C', 3], [0, 'F', 3], [0, 'B', 3]], [[0, 'D', 3], [0, 'F', 3], [0, 'F', 3], [1, 'B', 1]]]
+
+# Double Binary ant:
+# [[[1, 'C', 2], [1, 'C', 1], [1, 'B', 3], [1, 'F', 2]], [[1, 'E', 2], [0, 'E', 3], [0, 'B', 2], [0, 'F', 3]]]
+
+# Single binary ant:
+# [[[0, 'C', 3], [0, 'F', 3], [0, 'C', 1], [0, 'F', 2]], [[1, 'B', 3], [0, 'D', 2], [0, 'E', 1], [1, 'E', 2]]]
+
+# Loops:
+# [[[0, 'D', 3], [0, 'F', 2], [1, 'F', 3], [1, 'D', 1]], [[1, 'D', 2], [0, 'E', 1], [0, 'D', 3], [1, 'A', 2]]]
+
+
 import numpy as np
 import random
 import pygame
 from src.cell import CellShape
 from src.grid import Grid
+from src.general_ant import HexAnt
 
 pygame.font.init()
 
 WIN_WIDTH = 800
 WIN_HEIGHT = 800
-RANDOM = False
+RANDOM = True
+NORMAL = False
 
 # Either A (60 clockwise), B (120 clockwise), C (180), D (60 counter-clockwise), E (120 counter-clockwise), F (0)
-STATES = 7
+STATES = 2
+ANT_STATES = 1 if NORMAL else STATES
+CELL_STATES = 4
 LEGAL_MOVES = ["A", "B", "C", "D", "E", "F"]
 POSSIBLES_MOVES = []
 
 if RANDOM:
-    for i in range(STATES):
-        POSSIBLES_MOVES.append(LEGAL_MOVES[random.randint(0, 5)])
+    for i in range(ANT_STATES):
+        POSSIBLES_MOVES.append([])
+        for j in range(CELL_STATES):
+            POSSIBLES_MOVES[i].append([random.randint(1, ANT_STATES) - 1,
+                                       LEGAL_MOVES[random.randint(0, 5)],
+                                       1 if NORMAL else random.randint(1, CELL_STATES - 1)])
     print(POSSIBLES_MOVES)
 
 else:
-    POSSIBLES_MOVES = ["A", "B", "F", "C", "B", "A", "E"]
+    POSSIBLES_MOVES = [[[0, "F", 1], [0, "F", 1], [0, "F", 1], [1, "F", 1]],
+                       [[0, "B", 1], [1, "A", 3], [0, "E", 1], [1, "A", 2]]]
 
 GRID_WIDTH = 100
 GRID_HEIGHT = 100
@@ -46,8 +97,8 @@ ANT_COLOR = (255, 0, 0)
 WHITE = (255, 255, 255)
 
 STRENGTHS = []
-for color in range(STATES):
-    STRENGTHS.append(1 / (STATES - 1) * color)
+for color in range(CELL_STATES):
+    STRENGTHS.append(1 / (CELL_STATES - 1) * color)
 
 COLOR_SCHEME = [ANT_COLOR]
 for strength in STRENGTHS:
@@ -55,77 +106,15 @@ for strength in STRENGTHS:
     COLOR_SCHEME.append((value, value, value))
 
 
-class Ant:
-    def __init__(self, x, y):
-        self.pos = np.array([x, y])
-        self.orientation = 0
-        self.vel = np.zeros([])
-        self.color = (255, 0, 0)
-
-    def turn(self, grid):
-
-        cell = grid.get_current_cell(self.pos[0], self.pos[1])
-        grid.modified.append(cell)
-
-        if POSSIBLES_MOVES[cell.state] == "A":
-            self.orientation += 1
-        elif POSSIBLES_MOVES[cell.state] == "B":
-            self.orientation += 2
-        elif POSSIBLES_MOVES[cell.state] == "C":
-            self.orientation += 3
-        elif POSSIBLES_MOVES[cell.state] == "D":
-            self.orientation -= 1
-        elif POSSIBLES_MOVES[cell.state] == "E":
-            self.orientation -= 2
-
-        if self.orientation < 0:
-            self.orientation += 6
-
-        if self.orientation >= 6:
-            self.orientation -= 6
-
-        cell.state += 1
-        if cell.state >= STATES:
-            cell.state = 0
-
-    def apply_turn(self):
-
-        offset = self.pos[1] % 2
-
-        if self.orientation == 0:
-            self.vel = ([offset, 1])
-        if self.orientation == 1:
-            self.vel = ([offset - 1, 1])
-        if self.orientation == 2:
-            self.vel = ([-1, 0])
-        if self.orientation == 3:
-            self.vel = ([offset - 1, -1])
-        if self.orientation == 4:
-            self.vel = ([offset, -1])
-        if self.orientation == 5:
-            self.vel = ([1, 0])
-
-    def move(self, grid):
-
-        self.turn(grid)
-        self.apply_turn()
-        new_pos = np.add(self.pos, self.vel)
-        new_pos %= GRID_WIDTH - 1
-
-        self.pos = new_pos
-
-
 def main():
-    ant = Ant(ANT_START_X, ANT_START_Y)
-    grid = Grid(CELL_DIMENSIONS, GRID_WIDTH, GRID_HEIGHT, CellShape.HEX)
+    ant = HexAnt(ANT_START_X, ANT_START_Y, 0, 0, ANT_STATES, POSSIBLES_MOVES)
+    grid = Grid(CELL_DIMENSIONS, GRID_WIDTH, GRID_HEIGHT, CELL_STATES, CellShape.HEX)
     win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 
     score = 0
 
     running = True
     while running:
-
-        #pygame.time.wait(10)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
