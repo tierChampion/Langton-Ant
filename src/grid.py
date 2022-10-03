@@ -11,6 +11,10 @@ class Grid:
         self.state_count = state_count
         self.modified = []
 
+    def modify_cell(self, cell):
+        if not cell  in self.modified:
+            self.modified.append(cell)
+
     def get_grid(self, dims, shape):
         nodes = []
 
@@ -26,24 +30,13 @@ class Grid:
     def get_current_cell(self, row, col):
         return self.nodes[int(row), int(col)]
 
-    def render(self, win, color_scheme):
-        # Redraw the grid. Only do so with modified cells
-        to_redraw = None
-        counter = 0
-        for node in self.modified:
+    def render(self, win: pygame.display, color_scheme: list):
+        """ Render the necessary cells in the grid """
+        for cell in self.modified:
+            vertices = cell.vertices()
 
-            vertices = node.vertices()
-
-            if counter == len(self.modified) - 1:
-                pygame.draw.polygon(win, color_scheme[0],
-                                    vertices)
-                counter += 1
-                to_redraw = node
-            else:
-                pygame.draw.polygon(win, color_scheme[node.state + 1],
-                                    vertices)
-                counter += 1
+            pygame.draw.polygon(win, color_scheme[cell.state],
+                                vertices)
 
         pygame.display.update()
         self.modified.clear()
-        self.modified.append(to_redraw)

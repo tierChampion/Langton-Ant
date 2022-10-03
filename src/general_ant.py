@@ -9,13 +9,12 @@ class GeneralAnt(ABC):
     N-Turmite. Langton Ant with states and n legal moves. Abstract.
     """
 
-    def __init__(self, x: int, y: int, orientation: int, orientation_count: int,
-                 state: int, state_count: int, moves: list):
+    def __init__(self, x: int, y: int, orientation: int, orientation_count: int, state_count: int, moves: list):
         self.pos = np.array([x, y])
         self.orientation = orientation
         self.orientation_count = orientation_count
         self.vel = np.zeros([])
-        self.state = state
+        self.state = 0
         self.state_count = state_count
         self.moves = moves
 
@@ -61,14 +60,13 @@ class GeneralAnt(ABC):
 class TriAnt(GeneralAnt):
     """ 3-Turmite. Move along a grid of isosceles triangles. Has states and 3 legal moves. """
 
-    def __init__(self, x: int, y: int, orientation: int,
-                 state: int, state_count: int, moves: list):
-        super().__init__(x, y, orientation, int(CellShape.TRI), state, state_count, moves)
+    def __init__(self, x: int, y: int, orientation: int, state_count: int, moves: list):
+        super().__init__(x, y, orientation, int(CellShape.TRI), state_count, moves)
 
     def turn(self, grid):
 
         cell = grid.get_current_cell(self.pos[0], self.pos[1])
-        grid.modified.append(cell)
+        grid.modify_cell(cell)
 
         action = self.moves[self.state][cell.state]
 
@@ -96,14 +94,13 @@ class TriAnt(GeneralAnt):
 class SquareAnt(GeneralAnt):
     """ 4-Turmite. Move along a grid of squares. Has states and 4 legal moves. """
 
-    def __init__(self, x: int, y: int, orientation: int,
-                 state: int, state_count: int, moves: list):
-        super().__init__(x, y, orientation, int(CellShape.SQUARE), state, state_count, moves)
+    def __init__(self, x: int, y: int, orientation: int, state_count: int, moves: list):
+        super().__init__(x, y, orientation, int(CellShape.SQUARE), state_count, moves)
 
     def turn(self, grid):
 
         cell = grid.get_current_cell(self.pos[0], self.pos[1])
-        grid.modified.append(cell)
+        grid.modify_cell(cell)
 
         action = self.moves[self.state][cell.state]
 
@@ -133,13 +130,13 @@ class SquareAnt(GeneralAnt):
 class HexAnt(GeneralAnt):
     """ 6-Turmite. Move along a grid of hexagons. Has states and 6 legal moves. """
 
-    def __init__(self, x, y, orientation, state, state_count, moves):
-        super().__init__(x, y, orientation, int(CellShape.HEX), state, state_count, moves)
+    def __init__(self, x, y, orientation, state_count, moves):
+        super().__init__(x, y, orientation, int(CellShape.HEX), state_count, moves)
 
     def turn(self, grid):
 
         cell = grid.get_current_cell(self.pos[0], self.pos[1])
-        grid.modified.append(cell)
+        grid.modify_cell(cell)
 
         action = self.moves[self.state][cell.state]
 
