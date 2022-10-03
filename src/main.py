@@ -22,7 +22,7 @@ ANT_START_Y = int(GRID_HEIGHT / 2)
 CELL_DIMENSIONS = WIN_WIDTH / GRID_WIDTH
 
 # TODO: Check the rules if ok. comment code. Make options clearer and accessable from outside or during rendering.
-# Stopping, resuming, speeding up, restarting the simulation
+# Speeding up, Restarting the simulation
 
 ant_states = 1 if NORMAL else TURMITE_STATES
 rules = []
@@ -75,20 +75,27 @@ def main():
     score = 0
 
     running = True
+    stopped = False
+
     while running:
+        # Controls
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    stopped = not stopped
 
-        for ant in colony:
-            ant.move(grid)
+        if not stopped:
+            for ant in colony:
+                ant.move(grid)
 
-        score += 1
+            score += 1
 
-        # Only render every x amount of steps
-        if score % STEP_SIZE == 0:
-            pygame.display.set_caption("Langton Ant | Iteration " + str(score))
-            grid.render(win, COLOR_SCHEME)
+            # Only render every x amount of steps
+            if score % STEP_SIZE == 0:
+                pygame.display.set_caption("Langton Ant | Iteration " + str(score))
+                grid.render(win, COLOR_SCHEME)
     pygame.quit()
     quit()
 
