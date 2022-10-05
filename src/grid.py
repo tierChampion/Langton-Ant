@@ -12,23 +12,27 @@ class Grid:
         self.modified = []
 
     def modify_cell(self, cell: Cell):
-        if not cell in self.modified:
+        if cell not in self.modified:
             self.modified.append(cell)
 
     def get_grid(self, dims: float, shape: CellShape):
         nodes = []
 
         for row in range(self.width):
-            current_row = []
             for col in range(self.height):
                 cell = Cell(dims, row, col, shape)
-                current_row.append(cell)
-            nodes.append(current_row)
+                nodes.append(cell)
 
         return np.array(nodes)
 
     def get_current_cell(self, row: int, col: int):
-        return self.nodes[int(row), int(col)]
+        return self.nodes[int(row) * int(self.width) + int(col)]
+
+    def clear(self):
+        for cell in self.nodes:
+            if cell.state != 0:
+                cell.state = 0
+                self.modify_cell(cell)
 
     def render(self, win: pygame.display, color_scheme: list):
         """ Render the necessary cells in the grid """

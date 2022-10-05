@@ -7,7 +7,6 @@ from src.general_ant import TriTurmite, SquareTurmite, HexTurmite
 
 WIN_WIDTH = 800
 WIN_HEIGHT = 800
-STEP_SIZE = 10
 COLONY_SIZE = 1
 SHAPE = CellShape.SQUARE
 RANDOM = True
@@ -22,8 +21,8 @@ ANT_START_X = int(GRID_WIDTH / 2)
 ANT_START_Y = int(GRID_HEIGHT / 2)
 CELL_DIMENSIONS = WIN_WIDTH / GRID_WIDTH
 
-# TODO: Check the rules if ok. comment code. Make options clearer and accessable from outside or during rendering.
-# Speeding up, Restarting the simulation
+# TODO:
+# Speeding up
 # Save image of the screen
 
 ant_states = 1 if NORMAL else TURMITE_STATES
@@ -52,11 +51,6 @@ for i in range(len(rules)):
     print("],")
 print("]")
 
-
-STRENGTHS = []
-for color in range(CELL_STATES):
-    STRENGTHS.append(1 / (CELL_STATES - 1) * color)
-
 COLOR_SCHEME = []
 for color in range(CELL_STATES):
     strength = 1 / (CELL_STATES - 1) * color
@@ -64,8 +58,8 @@ for color in range(CELL_STATES):
     COLOR_SCHEME.append((value, value, value))
 
 
-def main():
-    colony = []
+def init(colony: list, grid: Grid, reset: bool):
+    colony.clear()
     for a in range(COLONY_SIZE):
 
         x = ANT_START_X
@@ -82,10 +76,21 @@ def main():
         elif SHAPE == CellShape.HEX:
             colony.append(HexTurmite(x, y, 0, ant_states, rules))
 
+    if reset:
+        grid.clear()
+
+
+def main():
+
+    colony = []
     grid = Grid(CELL_DIMENSIONS, GRID_WIDTH, GRID_HEIGHT, CELL_STATES, SHAPE)
+    init(colony, grid, False)
+
     win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+    clock = pygame.time.Clock()
 
     score = 0
+    STEP_SIZE = 10
 
     running = True
     stopped = False
@@ -98,6 +103,15 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     stopped = not stopped
+                elif event.key == pygame.K_BACKSPACE:
+                    init(colony, grid, True)
+                    score = 0
+                elif event.key == pygame.K_UP:
+                    STEP_SIZE += 1
+                elif event.key == pygame.K_DOWN:
+                    STEP_SIZE -= 1
+                    if STEP_SIZE == 0:
+                        STEP_SIZE += 1
 
         if not stopped:
             for ant in colony:
@@ -107,6 +121,7 @@ def main():
 
             # Only render every x amount of steps
             if score % STEP_SIZE == 0:
+                clock.tick(1000)
                 pygame.display.set_caption("Langton Ant | Iteration " + str(score))
                 grid.render(win, COLOR_SCHEME)
     pygame.quit()
